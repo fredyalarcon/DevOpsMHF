@@ -1,13 +1,14 @@
 from marshmallow import fields
 from ..models import db
-from sqlalchemy import Enum, Column, DateTime, func, CheckConstraint
+from sqlalchemy import Enum, Column, DateTime, func, UniqueConstraint, Integer
 
 class BlackList(db.Model):
     __tablename__ = "blacklist"
-    idApp = db.Column(db.String(120), primary_key=True)
-    email = db.Column(db.String(120))
-    description = db.Column(db.String(255), nullable=False)
-    ip = db.Column(db.String(120))
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    idApp = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+    ip = db.Column(db.String(120), nullable=False)
     createdAt = db.Column(DateTime(timezone=True), server_default=func.now(), default=func.now(), nullable=False)
     UniqueConstraint(email, name='uq_blacklist_email')
     
