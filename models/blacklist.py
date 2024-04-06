@@ -1,6 +1,8 @@
 from marshmallow import fields
-from ..models import db
-from sqlalchemy import Enum, Column, DateTime, func, UniqueConstraint, Integer
+from models import db
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+
+from sqlalchemy import Column, DateTime, func, UniqueConstraint, Integer
 
 class BlackList(db.Model):
     __tablename__ = "blacklist"
