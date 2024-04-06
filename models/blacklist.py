@@ -22,6 +22,7 @@ class BlackListSchema(SQLAlchemyAutoSchema):
         include_relationships = True
         load_instance = True
 
+    id = fields.Integer(required=True)
     idApp = fields.String(required=True)
     email = fields.String(required=True)
     description = fields.String(required=False)
