@@ -144,8 +144,7 @@ cython_debug/
 .idea/*
 
 #DataBase
-converter.sql
-mysql_data
+test_database.db
 
 #appData
 converter_data
