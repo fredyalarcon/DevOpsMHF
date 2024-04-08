@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from models import db, BlackList, BlackListSchema
 import uuid
 import os
+from email_validator import validate_email, EmailNotValidError
 
 blackListSchema = BlackListSchema()
 
@@ -33,19 +34,45 @@ def create():
         return "Unauthorized", 401
     
     data = request.json
-    """ TODO pendientes las validaciones
-    TODO idApp debe venir de la data del request 
-    TODO La Ip debe tomarse del request """
-    email_instance = BlackList( \
-        idApp = str(uuid.uuid4()), \
+    ip = request.remote_addr
+    email = data.get('email')
+    idApp = data.get('idApp')
+
+    required_fields = ['email', 'idApp', 'description']
+    for field in required_fields:
+        if field not in data:
+            return f"La etiqueta del campo '{field}' es requerido.", 400
+    required_fields = ['email', 'idApp']
+    for field in required_fields:
+        if not data[field]:
+            return f"El campo '{field}' no puede estar vacío.", 402
+    if len(data['description']) > 255:
+            return "El motivo por el que se agrega a la lista es demasiado largo.", 406
+    
+    try:
+        validate_email(email)
+    except EmailNotValidError as e:
+        return jsonify({'error': str(e)}), 403
+    
+    try:
+        uuid.UUID(idApp)
+    except ValueError:
+        return "El campo 'idApp' debe ser un UUID válido.", 405
+    
+    email_filtro = BlackList.query.filter_by(email=email).first()
+
+    if email_filtro is None:
+        email_instance = BlackList( \
+        idApp = idApp, \
         email = data['email'], \
         description = data['description'], \
-        ip = data['ip'] \
-    )
-
-    db.session.add(email_instance)
-    db.session.commit()
-    return jsonify(blackListSchema.dump(email_instance))
+        ip = ip \
+        )
+        db.session.add(email_instance)
+        db.session.commit()
+        return jsonify(blackListSchema.dump(email_instance))
+    else:
+        return f"El email '{email}' ya se encuentra en la lista negra.", 407
 
 @app.get("/blacklists/<string:email>")
 def get(email):
