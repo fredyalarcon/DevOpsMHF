@@ -33,6 +33,9 @@ def create():
         return "Unauthorized", 401
     
     data = request.json
+    """ TODO pendientes las validaciones
+    TODO idApp debe venir de la data del request 
+    TODO La Ip debe tomarse del request """
     email_instance = BlackList( \
         idApp = str(uuid.uuid4()), \
         email = data['email'], \
