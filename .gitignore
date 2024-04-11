@@ -147,4 +147,4 @@ cython_debug/
 test_database.db
 
 #appData
-converter_data
+pgdata-blacklist/

@@ -1,0 +1,40 @@
+version: "3.8"
+   
+services:
+  blacklist_api:
+    build: .
+    command: python -m flask run -p 8080 --host=0.0.0.0
+    ports: 
+      - "8080:8080" 
+    environment:
+      DB_HOST: "blacklist_db"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+      DB_NAME: "blacklist_db"
+    networks:
+      - default
+    links:
+      - blacklist_db
+    depends_on:
+      blacklist_db:
+        condition: service_healthy
+
+  blacklist_db:
+    container_name: blacklist_db
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=blacklist_db
+    networks:
+      - default
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata-blacklist:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 5

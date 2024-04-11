@@ -9,15 +9,16 @@ blackListSchema = BlackListSchema()
 app = Flask(__name__)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] =\
-    'sqlite:///' + os.path.join(basedir, 'test_database.db')
+# app.config['SQLALCHEMY_DATABASE_URI'] =\
+#     'sqlite:///' + os.path.join(basedir, 'test_database.db')
 
-# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://postgres:postgres@localhost:5432/user_db"
-# app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://{}:{}@{}:{}/{}".format(os.environ.get('DB_USER'), \
-# os.environ.get('DB_PASSWORD'), \
-# os.environ.get('DB_HOST'), \
-# os.environ.get('DB_PORT'), \
-# os.environ.get('DB_NAME'))
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://{}:{}@{}:{}/{}".format( \
+os.environ.get('DB_USER') or 'postgres', \
+os.environ.get('DB_PASSWORD') or 'postgres', \
+os.environ.get('DB_HOST') or 'localhost', \
+os.environ.get('DB_PORT') or '5432', \
+os.environ.get('DB_NAME') or 'blacklist_db')
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
 
