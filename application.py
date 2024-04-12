@@ -15,7 +15,7 @@ application = Flask(__name__)
 application.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://{}:{}@{}:{}/{}".format( \
 os.environ.get('RDS_USERNAME') or 'postgres', \
 os.environ.get('DB_PASSWORD') or 'postgres', \
-os.environ.get('RDS_HOSTNAME') or 'localhost', \
+os.environ.get('RDS_HOSTNAME') or 'blacklist-instance.cxw6wye0iiw7.us-east-1.rds.amazonaws.com', \
 os.environ.get('RDS_PORT') or '5432', \
 os.environ.get('RDS_PASSWORD') or 'blacklist_db')
 
