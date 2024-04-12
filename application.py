@@ -12,7 +12,7 @@ application = Flask(__name__)
 # application.config['SQLALCHEMY_DATABASE_URI'] =\
 #     'sqlite:///' + os.path.join(basedir, 'test_database.db')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://{}:{}@{}:{}/{}".format( \
+application.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://{}:{}@{}:{}/{}".format( \
 os.environ.get('RDS_USERNAME') or 'postgres', \
 os.environ.get('DB_PASSWORD') or 'postgres', \
 os.environ.get('RDS_HOSTNAME') or 'localhost', \
