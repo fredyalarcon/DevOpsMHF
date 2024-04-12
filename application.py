@@ -1,34 +1,34 @@
-from flask import Flask, jsonify, request
-from models import db, BlackList, BlackListSchema
 import uuid
 import os
+from flask import Flask, jsonify, request
+from models import db, BlackList, BlackListSchema
 from email_validator import validate_email, EmailNotValidError
 
 blackListSchema = BlackListSchema()
 
-app = Flask(__name__)
+application = Flask(__name__)
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-# app.config['SQLALCHEMY_DATABASE_URI'] =\
+# basedir = os.path.abspath(os.path.dirname(__file__))
+# application.config['SQLALCHEMY_DATABASE_URI'] =\
 #     'sqlite:///' + os.path.join(basedir, 'test_database.db')
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://{}:{}@{}:{}/{}".format( \
-os.environ.get('DB_USER') or 'postgres', \
+os.environ.get('RDS_USERNAME') or 'postgres', \
 os.environ.get('DB_PASSWORD') or 'postgres', \
-os.environ.get('DB_HOST') or 'localhost', \
-os.environ.get('DB_PORT') or '5432', \
-os.environ.get('DB_NAME') or 'blacklist_db')
+os.environ.get('RDS_HOSTNAME') or 'localhost', \
+os.environ.get('RDS_PORT') or '5432', \
+os.environ.get('RDS_PASSWORD') or 'blacklist_db')
 
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['PROPAGATE_EXCEPTIONS'] = True
+application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+application.config['PROPAGATE_EXCEPTIONS'] = True
 
-app_context = app.app_context()
+app_context = application.app_context()
 app_context.push()
 
-db.init_app(app)
+db.init_app(application)
 db.create_all()
 
-@app.post("/blacklists")
+@application.post("/blacklist")
 def create():
     token = request.headers.get('Authorization') 
     if token is None: 
@@ -53,7 +53,7 @@ def create():
     try:
         validate_email(email)
     except EmailNotValidError as e:
-        return jsonify({'error': str(e)}), 403
+        return jsonify({'error': str(e)}), 400
     
     try:
         uuid.UUID(idApp)
@@ -75,7 +75,7 @@ def create():
     else:
         return f"El email '{email}' ya se encuentra en la lista negra.", 407
 
-@app.get("/blacklists/<string:email>")
+@application.get("/blacklist/<string:email>")
 def get(email):
     token = request.headers.get('Authorization') 
     if token is None: 
@@ -88,5 +88,9 @@ def get(email):
 
     return jsonify(blackListSchema.dump(email_instance))
 
+@application.get("/blacklist/ping")
+def ping():
+    return "pong"
+
 if __name__ == "__main__":
-    app.run(port = 5000, debug = True)
+    application.run(port = 5000, debug = True)

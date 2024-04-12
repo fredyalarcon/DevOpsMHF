@@ -148,3 +148,8 @@ test_database.db
 
 #appData
 pgdata-blacklist/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
