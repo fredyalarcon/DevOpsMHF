@@ -14,10 +14,10 @@ application = Flask(__name__)
 
 application.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://{}:{}@{}:{}/{}".format( \
 os.environ.get('RDS_USERNAME') or 'postgres', \
-os.environ.get('DB_PASSWORD') or 'postgres', \
-os.environ.get('RDS_HOSTNAME') or 'blacklist-instance.cxw6wye0iiw7.us-east-1.rds.amazonaws.com', \
+os.environ.get('RDS_PASSWORD') or 'postgres', \
+os.environ.get('RDS_HOSTNAME') or 'localhost', \
 os.environ.get('RDS_PORT') or '5432', \
-os.environ.get('RDS_PASSWORD') or 'blacklist_db')
+os.environ.get('RDS_DB_NAME') or 'blacklist_db')
 
 application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 application.config['PROPAGATE_EXCEPTIONS'] = True
@@ -90,7 +90,18 @@ def get(email):
 
 @application.get("/blacklist/ping")
 def ping():
-    return "pong"
+    return "pong - version 4"
+
+@application.get("/blacklist/reset")
+def reset():
+    emails = BlackList.query.all()
+
+    for email in emails:
+        db.session.delete(email)
+
+    db.session.commit()
+
+    return "OK"
 
 if __name__ == "__main__":
     application.run(port = 5000, debug = True)
