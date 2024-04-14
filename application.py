@@ -90,7 +90,7 @@ def get(email):
 
 @application.get("/blacklist/ping")
 def ping():
-    return "pong - version 4"
+    return "pong - version 6"
 
 @application.get("/blacklist/reset")
 def reset():
